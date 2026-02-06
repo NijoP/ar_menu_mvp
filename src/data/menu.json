@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1",
+    "name": "Chicken Curry",
+    "price": 250,
+    "model_path": "/models/chicken_curry.glb",
+    "description": "Freshly prepared Chicken Curry"
+  },
+  {
+    "id": "2",
+    "name": "Paneer Butter Masala",
+    "price": 220,
+    "model_path": "/models/paneer_butter_masala.glb",
+    "description": "Freshly prepared Paneer Butter Masala"
+  },
+  {
+    "id": "3",
+    "name": "Veg Fried Rice",
+    "price": 180,
+    "model_path": "/models/veg_fried_rice.glb",
+    "description": "Freshly prepared Veg Fried Rice"
+  },
+  {
+    "id": "4",
+    "name": "Chicken Biriyani",
+    "price": 280,
+    "model_path": "/models/chicken_biriyani.glb",
+    "description": "Freshly prepared Chicken Biriyani"
+  },
+  {
+    "id": "5",
+    "name": "Masala Dosa",
+    "price": 120,
+    "model_path": "/models/masala_dosa.glb",
+    "description": "Freshly prepared Masala Dosa"
+  },
+  {
+    "id": "6",
+    "name": "Butter Naan",
+    "price": 40,
+    "model_path": "/models/butter_naan.glb",
+    "description": "Freshly prepared Butter Naan"
+  },
+  {
+    "id": "7",
+    "name": "Veg Burger",
+    "price": 150,
+    "model_path": "/models/veg_burger.glb",
+    "description": "Freshly prepared Veg Burger"
+  },
+  {
+    "id": "8",
+    "name": "French Fries",
+    "price": 100,
+    "model_path": "/models/french_fries.glb",
+    "description": "Freshly prepared French Fries"
+  },
+  {
+    "id": "9",
+    "name": "Pizza Slice",
+    "price": 150,
+    "model_path": "/models/pizza_slice.glb",
+    "description": "Freshly prepared Pizza Slice"
+  },
+  {
+    "id": "10",
+    "name": "Ice Cream",
+    "price": 80,
+    "model_path": "/models/ice_cream.glb",
+    "description": "Freshly prepared Ice Cream"
+  }
+]
