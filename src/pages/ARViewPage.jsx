@@ -72,14 +72,17 @@ function ARScene({ modelUrl }) {
 function XRExperience({ modelUrl, scale }) {
     const reticleRef = useRef();
     const [modelPos, setModelPos] = useState(null);
-    const [rotation, setRotation] = useState(0);
 
-    // Update reticle
+    // Update reticle position based on hit test
     useHitTest((hitMatrix) => {
         if (!modelPos && reticleRef.current) {
-            hitMatrix.decompose(reticleRef.current.position, reticleRef.current.quaternion, reticleRef.current.scale);
-            // Ensure reticle is flat
-            // reticleRef.current.rotation.x = -Math.PI / 2; 
+            hitMatrix.decompose(
+                reticleRef.current.position,
+                reticleRef.current.quaternion,
+                reticleRef.current.scale
+            );
+            reticleRef.current.rotation.x = -Math.PI / 2;
+            reticleRef.current.visible = true;
         }
     });
 
@@ -89,32 +92,36 @@ function XRExperience({ modelUrl, scale }) {
         }
     };
 
-    // Simple Drag Logic (Touch)
-    // We'll use a transparent plane on top of the model to handle drag if model is present?
-    // Or just simple rotation buttons for MVP to avoid "rotate by drag" complexity with XREvents.
-    // User requested "Rotate by drag", so we'll try OrbitControls around the model, that often works in AR too.
-
     return (
         <>
-            <ambientLight />
-            <pointLight position={[10, 10, 10]} />
+            <ambientLight intensity={1.5} />
+            <directionalLight position={[5, 10, 5]} intensity={2} />
+            <pointLight position={[-5, 5, -5]} intensity={1} />
 
+            {/* Reticle - visible only before placement */}
             {!modelPos && (
-                <mesh ref={reticleRef} rotation-x={-Math.PI / 2}>
-                    <ringGeometry args={[0.1, 0.25, 32]} />
-                    <meshBasicMaterial color="white" />
+                <mesh ref={reticleRef} visible={false}>
+                    <ringGeometry args={[0.1, 0.15, 32]} />
+                    <meshStandardMaterial color="#ff4081" emissive="#ff4081" emissiveIntensity={2} />
+                    {/* Inner dot for better targeting */}
+                    <mesh>
+                        <circleGeometry args={[0.02, 16]} />
+                        <meshBasicMaterial color="white" />
+                    </mesh>
                 </mesh>
             )}
 
-            {/* Place on tap */}
-            <mesh onClick={handleSelect} rotation-x={-Math.PI / 2} visible={false}>
-                <planeGeometry args={[100, 100]} />
-            </mesh>
+            {/* Large invisible interactive surface to catch taps anywhere */}
+            {!modelPos && (
+                <mesh onClick={handleSelect} rotation-x={-Math.PI / 2} visible={false}>
+                    <planeGeometry args={[20, 20]} />
+                </mesh>
+            )}
 
             {/* The Model */}
             {modelPos && (
                 <group position={modelPos}>
-                    {/* OrbitControls allows dragging to rotate */}
+                    {/* OrbitControls enables the "Drag to rotate" requirement */}
                     <OrbitControls enableZoom={false} enablePan={false} />
                     <Suspense fallback={null}>
                         <Model url={modelUrl} scaleVal={scale} />
@@ -125,37 +132,81 @@ function XRExperience({ modelUrl, scale }) {
     );
 }
 
-
 const ARViewPage = () => {
     const { id } = useParams();
     const item = menuData.find(i => i.id === id);
-    const [scale, setScale] = useState(0.8);
+    const [scale, setScale] = useState(0.08); // Smaller default scale for GLTF exported from Three
+    const [status, setStatus] = useState('Initializing AR...');
 
     if (!item) return <div style={{ color: 'white', padding: 20 }}>Item not found</div>;
 
     return (
-        <div style={{ width: '100vw', height: '100vh', background: 'black' }}>
-            <ARButton sessionInit={{ requiredFeatures: ['hit-test'] }}
+        <div style={{ width: '100vw', height: '100vh', background: 'black', position: 'relative' }}>
+            {/* AR Button with required features */}
+            <ARButton
+                sessionInit={{ requiredFeatures: ['hit-test'] }}
                 style={{
-                    position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)',
-                    zIndex: 10, background: 'var(--accent)', color: 'white', padding: '12px 24px',
-                    borderRadius: '24px', fontWeight: 'bold'
+                    position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)',
+                    zIndex: 20, background: '#ff4081', color: 'white', padding: '15px 30px',
+                    borderRadius: '30px', fontWeight: 'bold', border: 'none', boxShadow: '0 5px 20px rgba(255, 64, 129, 0.4)',
+                    fontSize: '1.1rem'
                 }}
             />
 
             {/* UI Overlay */}
-            <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 10 }}>
-                <Link to="/" style={{ color: 'white', background: 'rgba(0,0,0,0.5)', padding: '8px 16px', borderRadius: '16px' }}>
-                    &larr; Back
+            <div style={{ position: 'absolute', top: '30px', left: '20px', zIndex: 20 }}>
+                <Link to="/menu" style={{
+                    color: 'white',
+                    background: 'rgba(0,0,0,0.6)',
+                    padding: '10px 20px',
+                    borderRadius: '20px',
+                    textDecoration: 'none',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255,255,255,0.2)'
+                }}>
+                    &larr; Exit AR
                 </Link>
             </div>
 
-            <div style={{ position: 'absolute', bottom: '100px', right: '20px', display: 'flex', flexDirection: 'column', gap: '10px', zIndex: 10 }}>
-                <button className="glass" onClick={() => setScale(s => Math.min(s + 0.1, 2))} style={{ width: '40px', height: '40px', color: 'white', fontSize: '1.2rem' }}>+</button>
-                <button className="glass" onClick={() => setScale(s => Math.max(s - 0.1, 0.2))} style={{ width: '40px', height: '40px', color: 'white', fontSize: '1.2rem' }}>-</button>
+            {/* Instructions Overlay */}
+            <div style={{
+                position: 'absolute',
+                top: '100px',
+                width: '100%',
+                textAlign: 'center',
+                zIndex: 10,
+                pointerEvents: 'none'
+            }}>
+                <p style={{
+                    color: 'white',
+                    background: 'rgba(0,0,0,0.4)',
+                    display: 'inline-block',
+                    padding: '8px 20px',
+                    borderRadius: '20px',
+                    fontSize: '0.9rem',
+                    backdropFilter: 'blur(5px)'
+                }}>
+                    Point at floor and tap to place {item.name}
+                </p>
             </div>
 
-            <Canvas>
+            {/* Controls */}
+            <div style={{ position: 'absolute', bottom: '120px', right: '20px', display: 'flex', flexDirection: 'column', gap: '15px', zIndex: 20 }}>
+                <button
+                    onClick={() => setScale(s => s * 1.2)}
+                    style={{ width: '50px', height: '50px', borderRadius: '15px', background: 'rgba(255,255,255,0.2)', color: 'white', fontSize: '1.5rem', border: '1px solid white', backdropFilter: 'blur(10px)' }}
+                >
+                    +
+                </button>
+                <button
+                    onClick={() => setScale(s => s / 1.2)}
+                    style={{ width: '50px', height: '50px', borderRadius: '15px', background: 'rgba(255,255,255,0.2)', color: 'white', fontSize: '1.5rem', border: '1px solid white', backdropFilter: 'blur(10px)' }}
+                >
+                    -
+                </button>
+            </div>
+
+            <Canvas shadows camera={{ position: [0, 2, 5] }}>
                 <XR>
                     <XRExperience modelUrl={item.model_path} scale={scale} />
                 </XR>
