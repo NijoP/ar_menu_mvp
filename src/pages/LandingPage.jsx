@@ -27,25 +27,45 @@ const LandingPage = () => {
             <div className="glass" style={{
                 padding: '40px',
                 borderRadius: '30px',
-                background: 'rgba(255, 255, 255, 0.03)'
+                background: 'rgba(255, 255, 255, 0.03)',
+                maxWidth: '90%'
             }}>
-                <img
-                    src="/qr.png"
-                    alt="Scan for Menu"
-                    style={{
-                        width: '300px',
-                        height: '300px',
-                        borderRadius: '20px',
-                        boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
-                    }}
-                />
-                <p style={{
-                    marginTop: '20px',
+                {/* Conditionally show QR code or View Menu button based on screen size/device */}
+                <div className="desktop-only" style={{ display: 'block' }}>
+                    <img
+                        src="/qr.png"
+                        alt="Scan for Menu"
+                        style={{
+                            width: 'min(300px, 80vw)',
+                            height: 'auto',
+                            borderRadius: '20px',
+                            boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
+                        }}
+                    />
+                    <p style={{
+                        marginTop: '20px',
+                        fontSize: '1.2rem',
+                        color: 'var(--text-secondary)'
+                    }}>
+                        Scan to View Menu in AR
+                    </p>
+                </div>
+
+                <Link to="/menu" style={{
+                    display: 'inline-block',
+                    marginTop: '30px',
+                    padding: '15px 40px',
+                    background: 'var(--accent-gradient)',
+                    color: 'white',
+                    textDecoration: 'none',
+                    borderRadius: '50px',
+                    fontWeight: '800',
                     fontSize: '1.2rem',
-                    color: 'var(--text-secondary)'
+                    boxShadow: '0 10px 20px rgba(255, 64, 129, 0.4)',
+                    transition: 'transform 0.2s'
                 }}>
-                    Scan to View Menu in AR
-                </p>
+                    VIEW MENU
+                </Link>
             </div>
         </div>
     );
