@@ -3,7 +3,7 @@ import QRCode from 'qrcode';
 import path from 'path';
 import fs from 'fs';
 
-const url = 'http://localhost:5173';
+const url = 'https://ar-menu-mvp-one.vercel.app';
 const outputPath = path.join('public', 'qr.png');
 
 QRCode.toFile(outputPath, url, {
