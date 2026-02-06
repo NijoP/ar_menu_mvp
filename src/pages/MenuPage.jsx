@@ -56,30 +56,32 @@ const MenuPage = () => {
                         <div style={{ flex: 1 }}>
                             <h3 style={{ margin: '0 0 6px 0', fontSize: '1.25rem', fontWeight: '600', color: '#fff' }}>{item.name}</h3>
                             <p style={{ margin: 0, fontSize: '0.9rem', color: '#888' }}>{item.description || 'Delicious & Fresh'}</p>
-                            <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{ marginTop: '15px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                 <span style={{
-                                    fontSize: '1.1rem',
-                                    fontWeight: '700',
+                                    fontSize: '1.2rem',
+                                    fontWeight: '800',
                                     color: '#ff4081'
                                 }}>₹{item.price}</span>
+
+                                <Link to={`/ar/${item.id}`} style={{
+                                    textDecoration: 'none',
+                                    background: 'var(--accent-gradient)',
+                                    color: 'white',
+                                    padding: '8px 16px',
+                                    borderRadius: '12px',
+                                    fontSize: '0.85rem',
+                                    fontWeight: '700',
+                                    boxShadow: '0 4px 15px rgba(255, 64, 129, 0.3)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    transition: 'transform 0.2s'
+                                }}>
+                                    <span style={{ fontSize: '1rem' }}>📦</span>
+                                    VIEW IN AR
+                                </Link>
                             </div>
                         </div>
-
-                        <Link to={`/ar/${item.id}`} style={{
-                            textDecoration: 'none',
-                            background: 'linear-gradient(135deg, #222 0%, #333 100%)',
-                            width: '50px',
-                            height: '50px',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            marginLeft: '15px'
-                        }}>
-                            <span style={{ fontSize: '1.5rem' }}>📦</span>
-                        </Link>
                     </div>
                 ))}
             </div>
